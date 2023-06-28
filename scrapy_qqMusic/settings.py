@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = "scrapy_qqMusic.spiders"
 #USER_AGENT = "scrapy_qqMusic (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -91,3 +91,9 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# 要爬取的歌手mid
+singer_mid = [
+                '001z2JmX09LLgL', #汪苏泷
+                '0025NhlN2yWrP4', #周杰伦
+              ]
