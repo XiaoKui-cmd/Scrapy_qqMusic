@@ -28,7 +28,7 @@ class qqMusicSpider(scrapy.Spider):
      # 解析函数 
     def parse(self, response): 
         # 解析歌手URL 
-        for singer_url in response.css("#top250 > tbody > tr > td.info > a::attr('href')").getall(): 
+        for singer_url in response.css("#app > div > div.main > div.mod_singer_list > ul").getall(): 
             yield scrapy.Request(url=singer_url, callback=self.parse_singer) 
          # 解析下一页URL 
         next_url_param = response.css("#content > div > div.paginator > a.next::attr('href')").get() 
