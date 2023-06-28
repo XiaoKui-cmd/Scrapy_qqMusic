@@ -65,7 +65,7 @@ class AlbumMysqlPipeline:
 # 将歌手信息保存到json文件中
 class SingerJsonPipeline:
     def open_spider(self, spider):
-        self.file = open('singer.json', 'w', encoding='utf-8')
+        self.file = open('singer.json', 'wb')
         self.exporter = JsonItemExporter(self.file, ensure_ascii=False)
         self.exporter.start_exporting()
 
@@ -80,7 +80,7 @@ class SingerJsonPipeline:
 # 将歌曲信息保存到json文件中
 class MusicJsonPipeline:
     def open_spider(self, spider):
-        self.file = open('music.json', 'w', encoding='utf-8')
+        self.file = open('music.json', 'wb')
         self.exporter = JsonItemExporter(self.file, ensure_ascii=False)
         self.exporter.start_exporting()
 
@@ -95,7 +95,7 @@ class MusicJsonPipeline:
 # 将专辑信息保存到json文件中
 class AlbumJsonPipeline:
     def open_spider(self, spider):
-        self.file = open('Album.json', 'w', encoding='utf-8')
+        self.file = open('Album.json', 'wb')
         self.exporter = JsonItemExporter(self.file, ensure_ascii=False)
         self.exporter.start_exporting()
 

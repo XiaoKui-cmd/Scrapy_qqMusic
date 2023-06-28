@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*- 
 import scrapy 
 from scrapy_qqMusic.items import MusicItem 
- # 创建爬虫类 
+ # 创建爬虫类
+ 
 class qqMusicSpider(scrapy.Spider): 
     # 爬虫名称 
     name = "qqMusic" 
