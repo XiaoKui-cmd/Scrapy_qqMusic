@@ -13,6 +13,10 @@ SPIDER_MODULES = ["scrapy_qqMusic.spiders"]
 NEWSPIDER_MODULE = "scrapy_qqMusic.spiders"
 
 
+# 使用UserAgent来生成USER_AGENT
+from fake_useragent import UserAgent
+USER_AGENT = UserAgent().random
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "scrapy_qqMusic (+http://www.yourdomain.com)"
 
@@ -92,8 +96,31 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
+# pipeline优先级设置
+# 注：这个写在spider里面似乎会出现未知特性
+DOWNLOAD_DELAY =  1
+# 这里只开启一个用于debug
+ITEM_PIPELINES = { 
+    # "scrapy_qqMusic.pipelines.SingerMysqlPipeline":404, # 歌手MySQL管道 
+    "scrapy_qqMusic.pipelines.SingerJsonPipeline":403, # 歌手JSON管道 
+    # "scrapy_qqMusic.pipelines.MusicMysqlPipeline": 402, # 歌曲MySQL管道 
+    # "scrapy_qqMusic.pipelines.MusicJsonPipeline": 401, # 歌曲JSON管道 
+    # "scrapy_qqMusic.pipelines.AlbumMysqlPipeline": 400, # 专辑MySQL管道 
+    # "scrapy_qqMusic.pipelines.AlbumJsonPipeline": 399, # 专辑JSON管道 
+        }
+
 # 要爬取的歌手mid
 singer_mid = [
-                '001z2JmX09LLgL', #汪苏泷
-                '0025NhlN2yWrP4', #周杰伦
-              ]
+  '001z2JmX09LLgL', #汪苏泷
+  '0025NhlN2yWrP4', #周杰伦
+  '000c2vQb13oq5I' #hanser
+]
+
+# 数据库配置
+MYSQL_CONFIG = {
+    'host': '101.42.22.211',
+    'port': '3306',
+    'user': 'student',
+    'password': 'Ambow99(',
+    'database': 'sms'
+}

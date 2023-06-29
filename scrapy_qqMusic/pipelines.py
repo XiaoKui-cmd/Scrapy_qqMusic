@@ -10,15 +10,16 @@ from scrapy.exporters import JsonItemExporter
 from mysql import connector
 
 
-# 将歌曲信息保存入数据库
-class MusicMysqlPipeline:
+# 将歌手信息保存入数据库
+class SingerMysqlPipeline:
     def open_spider(self, spider):
         self.db_cnx = connector.connect(**spider.settings.get("MYSQL_CONFIG"))
         self.db_cursor = self.db_cnx.cursor()
+        
 
     def process_item(self, item, spider):
-        sql = "INSERT INTO music ( music_name, music_writer, music_composer, music_lyric ) VALUES ( %s, %s, %s, %s);"
-        data = (item['name'], item['writer'], item['composer'], item['lyric'])
+        sql = "INSERT INTO singer (singer_name, Singer_nationality, Singer_birthday, Song_name) VALUES (%s, %s, %s, %s)"
+        data = (item['Singer_name'], item['Singer_nationality'], item['Singer_birthday'], item['Song_name'])
         self.db_cursor.execute(sql, data)
         return item
 
@@ -27,15 +28,15 @@ class MusicMysqlPipeline:
         self.db_cursor.close()
         self.db_cnx.close()
         
-# 将歌手信息保存入数据库
-class SingerMysqlPipeline:
+# 将歌曲信息保存入数据库
+class MusicMysqlPipeline:
     def open_spider(self, spider):
         self.db_cnx = connector.connect(**spider.settings.get("MYSQL_CONFIG"))
         self.db_cursor = self.db_cnx.cursor()
 
     def process_item(self, item, spider):
-        sql = "INSERT INTO singer ( singer_name, singer_rating_number ) VALUES ( %s, %s);"
-        data = (item['name'], item['rating_num'])
+        sql = "INSERT INTO music ( music_name, music_writer, music_composer, music_lyric ) VALUES ( %s, %s, %s, %s);"
+        data = (item['Song_name'], item['Song_writer'], item['Song_composer'], item['Song_lyricist'])
         self.db_cursor.execute(sql, data)
         return item
 
@@ -51,8 +52,8 @@ class AlbumMysqlPipeline:
         self.db_cursor = self.db_cnx.cursor()
 
     def process_item(self, item, spider):
-        sql = "INSERT INTO album ( album_name, album_rating_number ) VALUES ( %s, %s);"
-        data = (item['name'], item['rating_num'])
+        sql = "INSERT INTO album ( album_name, album_release_time, album_company )VALUES ( %s, %s, %s);"
+        data = (item['Album_name'], item['Album_release_time'], item['Album_company'])
         self.db_cursor.execute(sql, data)
         return item
 
@@ -74,8 +75,12 @@ class SingerJsonPipeline:
         return item
 
     def close_spider(self, spider):
-        self.file.write("]")
         self.file.close()
+        file = open('singer.json', 'a')
+        file.write("]")
+        file.close()
+        # self.file.write("]")
+        # self.file.close()
 
 # 将歌曲信息保存到json文件中
 class MusicJsonPipeline:
@@ -106,5 +111,4 @@ class AlbumJsonPipeline:
     def close_spider(self, spider):
         self.file.write("]")
         self.file.close()
-        
         
