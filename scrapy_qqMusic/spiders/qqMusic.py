@@ -1,55 +1,65 @@
-# -*- coding: utf-8 -*- 
-import scrapy 
-from scrapy_qqMusic.items import MusicItem 
-import re
- # 创建爬虫类
- 
-class qqMusicSpider(scrapy.Spider): 
-    # 爬虫名称 
-    name = "qqMusic" 
-    # 允许爬取的域名 
-    allowed_domains = ["y.qq.com"] 
-    # 起始URL列表 
-    # start_urls = ["https://y.qq.com/n/ryqq/singer/0025NhlN2yWrP4"] 
-    start_urls = [  "https://y.qq.com/n/ryqq/singer/0025NhlN2yWrP4", "https://y.qq.com/n/ryqq/singer/001z2JmX09LLgL"]
-    
-    # 将start_urls中所有的内容都分别给parse方法来处理
-    def start_requests(self):
-        for url in self.start_urls:
-            yield scrapy.Request(url, callback=self.parse_items)
-    
-    
-    # 这里是要传到items中的各种信息
-    def parse_items(self, response): 
-        item = MusicItem()
-        # 歌手名
-        item["Singer_name"] = response.css("#app > div > div.main > div.mod_data > div.data__cont > div.data__name > h1::text").get()
-        # 歌手国籍
-        item["Singer_nationality"] = response.css("#popup_data_detail > div > p:nth-child(5)::text").get().replace("国籍：", "")
-        # 歌手生日(处理生日真不是一件容易事)
-        birthday_row = [birthday for birthday in response.css("#popup_data_detail > div > p").getall() if "生日" in birthday][0]
-        item["Singer_birthday"] = birthday_row[birthday_row.find('：') + 1:birthday_row.find('</p>')]
-        # 歌曲名(此处为歌手页热门歌曲)
-        item["Song_name"] = response.css("#app > div > div.main > div:nth-child(2) > div.mod_songlist > ul.songlist__list > li > a::attr('href')").getall()
-        # item["Song_writer"] = response.css("#app").get()
-        # item["Song_composer"] = response.css("#app").get()
-        # item["Album_name"] = response.css("#app").get()
-        # item["Album_release_time"] = response.css("#app").get()
-        # item["Album_company"] = response.css("#app").get()
+import scrapy
+from scrapy import Selector,Request
+from scrapy_qqMusic.items import MusicItem
+from urllib.parse import urljoin
 
-        # # debug用
-        # print("\n这里是parse拿到的页面数据：\n\n",
-        #       "singer_name:",item["Singer_name"],
-        #       "Singer_nationality:",item["Singer_nationality"],
-        #       "Singer_birthday:",item["Singer_birthday"],
-        #       "Song_name:",item["Song_name"],
-        #       "Song_writer:",item["Song_writer"],
-        #       "Song_writer:",item["Song_writer"],
-        #       "Song_composer:",item["Song_composer"],
-        #       "Album_name:",item["Album_name"],
-        #       "Album_release_time:",item["Album_release_time"],
-        #       "\n")
-        yield item
-    
-    def parse_song(self, response):
-        song_page = response.css("#app > div > div.main > div:nth-child(2) > div.mod_songlist > ul.songlist__list > li:nth-child(1)").getall()
+class QqmusicSpider(scrapy.Spider):
+    name = 'qqMusic'
+    allowed_domains = ['qqmusic.com', 'y.qq.com']
+    start_urls = ['https://y.qq.com/n/ryqq/singer/003Nz2So3XXYek','https://y.qq.com/n/ryqq/singer/001BLpXF2DyJe2' ]
+    sencond_url=['https://y.qq.com']
+
+    # 歌手部分
+    def parse(self, response):
+        sel = Selector(response)
+        items = MusicItem()
+        # 歌手名
+        items['Singer_name'] = sel.css(
+            '#app > div > div.main > div.mod_data > div.data__cont > div.data__name > h1.data__name_txt::text').extract_first()
+        items['Singer_nationality'] = sel.css('#popup_data_detail > div > p:nth-child(5)::text').extract_first()
+        # 歌手生日
+        birthday_row = [birthday for birthday in response.css("#popup_data_detail > div > p").getall() if "生日" in birthday][0]
+        items["Singer_birthday"] = birthday_row[birthday_row.find('：') + 1:birthday_row.find('</p>')]
+        print(items['Singer_name'], items['Singer_nationality'], items['Singer_birthday'])
+        yield items
+        # 找所有的专辑的url
+        list_iteams=sel.css('#app > div > div.main > div:nth-child(2) > div.mod_songlist > ul.songlist__list > li')
+        detail_urls = sel.css(' div.songlist__album > a::attr(href)').extract()
+        # 拿到所有专辑的url
+        for detail_url in detail_urls:
+            url = response.urljoin(detail_url)
+            yield Request(url=url, callback=self.parse_Albums)
+        # 找所有的歌曲的url
+        Song_iteams=sel.css(' div > div.songlist__songname > span > a::attr(href)').extract()
+        # 拿到所有歌曲的url
+        for Song_iteam in  Song_iteams:
+            url2 = response.urljoin(Song_iteam)
+            yield  Request(url=url2,callback=self.parse_Songs)
+
+    # 专辑部分
+    def parse_Albums(self, response):
+        sel = Selector(response)
+        items = MusicItem()
+        # 专辑名
+        items['Album_name'] = sel.css(
+            '#app > div > div.main > div.mod_data > div > div.data__name > h1.data__name_txt::text').extract()
+        # 专辑发布时间
+        items['Album_release_time'] = sel.css(
+            '#app > div > div.main > div.mod_data > div > ul > li:nth-of-type(3)::text').extract()
+        # 专辑唱片公司
+        items['Album_company'] = sel.css(
+            '#app > div > div.main > div.mod_data > div > ul > li:nth-of-type(4)::text').extract()
+        print(items['Album_name'], items['Album_release_time'], items['Album_company'])
+        return items
+    # 歌曲部分
+    def parse_Songs(self, response):
+        sel=Selector(response)
+        items = MusicItem()
+        # 歌曲名
+        items['Song_name']=sel.css(
+            '#app > div > div.main > div.mod_data > div > div.data__name > h1.data__name_txt::text').extract_first()
+        
+        items['Song_lyricist'] = sel.css(
+            '#app > div > div.main > div.mod_data > div > div.data__name > h1.data__name_txt::text').extract_first()
+        print(items['Song_name'], items['Song_lyricist'])
+        return items
