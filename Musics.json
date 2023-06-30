@@ -10,6 +10,26 @@
         "Singer_birthday": "1981年3月27日"
     },
     {
+        "Song_name": "最佳损友",
+        "Song_lyricist": "最佳损友"
+    },
+    {
+        "Song_name": "单车",
+        "Song_lyricist": "单车"
+    },
+    {
+        "Song_name": "爱情转移",
+        "Song_lyricist": "爱情转移"
+    },
+    {
+        "Song_name": "富士山下",
+        "Song_lyricist": "富士山下"
+    },
+    {
+        "Song_name": "十年",
+        "Song_lyricist": "十年"
+    },
+    {
         "Song_name": "孤勇者",
         "Song_lyricist": "孤勇者"
     },
@@ -124,26 +144,6 @@
     {
         "Song_name": "淘汰",
         "Song_lyricist": "淘汰"
-    },
-    {
-        "Song_name": "不要说话",
-        "Song_lyricist": "不要说话"
-    },
-    {
-        "Song_name": "红玫瑰",
-        "Song_lyricist": "红玫瑰"
-    },
-    {
-        "Song_name": "最佳损友",
-        "Song_lyricist": "最佳损友"
-    },
-    {
-        "Song_name": "单车",
-        "Song_lyricist": "单车"
-    },
-    {
-        "Song_name": "爱情转移",
-        "Song_lyricist": "爱情转移"
     },
     {
         "Song_name": "裂缝中的阳光",
@@ -277,11 +277,11 @@
         ]
     },
     {
-        "Song_name": "富士山下",
-        "Song_lyricist": "富士山下"
+        "Song_name": "不要说话",
+        "Song_lyricist": "不要说话"
     },
     {
-        "Song_name": "十年",
-        "Song_lyricist": "十年"
+        "Song_name": "红玫瑰",
+        "Song_lyricist": "红玫瑰"
     }
 ]
